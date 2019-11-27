@@ -1,4 +1,4 @@
-import { svelte2tsx } from './svelte2tsx';
+import svelte2tsx from 'svelte2tsx';
 import * as ts from 'typescript';
 import getCodeFrame from './from_svelte/code_frame'
 import * as path from 'path';

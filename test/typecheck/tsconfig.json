@@ -12,8 +12,8 @@
       "jsx": "preserve"
     },
     "files": [
-      "../../svelte-shims.d.ts",
-      "../../svelte-jsx.d.ts",
+      "../../node_modules/svelte2tsx/svelte-shims.d.ts",
+      "../../node_modules/svelte2tsx/svelte-jsx.d.ts",
     ],
     "exclude": [
       "node_modules"
