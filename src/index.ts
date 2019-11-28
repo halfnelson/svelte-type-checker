@@ -1,3 +1,4 @@
+import 'source-map-support/register'
 import { Warning } from 'svelte/types/compiler/interfaces';
 import chalk from 'chalk'
 import * as ts from 'typescript'

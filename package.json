@@ -50,7 +50,7 @@
     "prepublishOnly": "npm run build"
   },
   "bin": {
-    "svelte-type-checker": "./index.js"
+    "svelte-type-checker": "./cli.js"
   },
   "files": [
     "index.js",

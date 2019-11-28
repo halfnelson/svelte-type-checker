@@ -130,7 +130,7 @@ function transformDiagnostics(diagnostics: ts.Diagnostic[]): Warning[] {
                 start: { line: start.line, column: start.character },
                 end: { line: end.line, column: end.character },
                 filename: relativeFileName,
-                frame: getCodeFrame(sourceText, start.line, start.character, end.character - start.character) 
+                frame: getCodeFrame(sourceText, start.line, start.character, Math.max(start.line == end.line ? end.character - start.character: 1, 1) ) 
             }
 
             return warning;
