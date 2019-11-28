@@ -5,7 +5,7 @@ import json from 'rollup-plugin-json';
 import builtins from 'builtin-modules'
 
 export default [{
-	input: 'src/index.ts',
+	input: ['src/index.ts'],
 	output: [{
 		sourcemap: true,
 		format: 'commonjs',
@@ -23,5 +23,5 @@ export default [{
 	watch: {
 		clearScreen: false
 	},
-	external: [...builtins, 'typescript', 'svelte', 'svelte/compiler']
+	external: [...builtins, 'typescript', 'svelte2tsx']
 }];

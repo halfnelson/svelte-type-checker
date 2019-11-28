@@ -1,11 +1,13 @@
-//* try tp get errors
-import * as path from "path";
-import { compile, parseConfigFile } from './compiler';
 import { Warning } from 'svelte/types/compiler/interfaces';
 import chalk from 'chalk'
 import * as ts from 'typescript'
-import { existsSync, readdirSync } from "fs";
-export { compile, parseConfigFile };
+import * as path from 'path'
+import { Command } from 'commander'
+import { compile } from './compiler'
+import glob from 'tiny-glob/sync'
+import pkg from './../package.json';
+
+export { compile } from  './compiler'
 
 
 function reportDiagnostic(d: Warning) {
@@ -20,20 +22,8 @@ function reportDiagnostic(d: Warning) {
     process.stdout.write(output);
 }
 
-
-
-//cli?
-if (require.main === module) {
-    let args = process.argv.slice(2);
-    let srcPath = args.length && args[0] || "."
-    srcPath = path.resolve(process.cwd(), srcPath);
-
-    if (!existsSync(srcPath)) {
-        console.error(`Couldn't find the provided path: ${srcPath}`);
-        process.exit(1);
-    }
-
-    console.log(`Type checking source at: ${srcPath}`);
+function typeCheck(rootFilesGlob, tsconfigPath = null) {
+  
 
     //resolve config
     let compilerOptions: ts.CompilerOptions = {
@@ -44,11 +34,9 @@ if (require.main === module) {
         allowJs: true,
     };
 
-    const tsconfigPath = '' // ts.findConfigFile(srcPath, ts.sys.fileExists, 'tsconfig.json') ||
-        //ts.findConfigFile(srcPath, ts.sys.fileExists, 'jsconfig.json') ||
-        //'';
-
+    
     const configJson = tsconfigPath && ts.readConfigFile(tsconfigPath, ts.sys.readFile).config;
+
     let files: string[] = [];
     if (configJson) {
         const parsedConfig = ts.parseJsonConfigFileContent(
@@ -63,15 +51,19 @@ if (require.main === module) {
                 { extension: 'svelte', isMixedContent: false, scriptKind: ts.ScriptKind.TSX },
             ],
         );
+
         files = parsedConfig.fileNames;
         compilerOptions = { ...compilerOptions, ...parsedConfig.options };
-    } else {
-        //we do all svelte files in the current directory
-        files = readdirSync(srcPath).filter(f => f.endsWith(".svelte")).map(f => ts.sys.resolvePath(`${srcPath}/${f}`))
-    }
+
+    } 
+    
+    //add our glob files
+    let globFiles = glob(rootFilesGlob);
+    files = files.concat(globFiles.map(f => ts.sys.resolvePath(`${process.cwd()}/${f}`)))
+    
 
     //we force some options
-    let forcedOptions: ts.CompilerOptions = { 
+    let forcedOptions: ts.CompilerOptions = {
         noEmit: true,
         declaration: false,
         jsx: ts.JsxEmit.Preserve,
@@ -85,7 +77,36 @@ if (require.main === module) {
     const svelte2TsxPath = path.dirname(require.resolve('svelte2tsx'))
     const svelteTsxFiles = ['./svelte-shims.d.ts', './svelte-jsx.d.ts'].map(f => ts.sys.resolvePath(path.resolve(svelte2TsxPath, f)));
 
-
     let diags = compile(compilerOptions, files.concat(svelteTsxFiles));
     diags.forEach(reportDiagnostic)
 }
+
+export function cli() {
+    const program = new Command()
+    program.version(pkg.version);
+
+    program
+        .description('Runs the type checker over the files and their dependencies. [the glob defaults to *.svelte]')
+        .arguments('[rootFilesGlob]')
+        .option('-d --config-dir <dir>', 'tsconfig/jsconfig directory', process.cwd())
+        .action((rootFilesGlob, opts) => {
+            let glob = rootFilesGlob || '*.svelte'
+            console.log(chalk`\n{underline svelte-type-checker ${pkg.version}}\n\n{gray files:}\t\t${glob}`)
+
+            if (opts.dir && !ts.sys.directoryExists(opts.dir)) {
+                console.error(`Couldn't find the provided tsconfig directory: ${opts.dir}`);
+                process.exit(1);
+            }
+
+            const tsConfigPath = !opts.dir ? null : ts.findConfigFile(opts.dir, ts.sys.fileExists, 'tsconfig.json') || ts.findConfigFile(opts.dir, ts.sys.fileExists, 'jsconfig.json') || null;
+
+            console.log(chalk`{gray tsconfig:}\t${tsConfigPath || 'none'}\n\n`)
+
+            typeCheck(glob, tsConfigPath)
+        })
+
+    program.parse(process.argv);
+}
+
+
+

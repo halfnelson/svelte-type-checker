@@ -2,7 +2,6 @@ import svelte2tsx from 'svelte2tsx';
 import * as ts from 'typescript';
 import getCodeFrame from './from_svelte/code_frame'
 import * as path from 'path';
-import * as fs from 'fs';
 
 function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost {
 
@@ -26,7 +25,7 @@ function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost 
             (srcFile as any).__svelte_map = output.map;
             (srcFile as any).__svelte_source = sourceText;
            
-            fs.writeFileSync(fileName, output.code);
+            // fs.writeFileSync(fileName, output.code);
             return srcFile;
         }
         else {
@@ -71,7 +70,7 @@ import { Warning } from 'svelte/types/compiler/interfaces';
 import { SourceMap } from 'magic-string';
 
 function getRelativeFileName(fileName: string): string {
-    return path.relative(__dirname, fileName);
+    return path.relative(ts.sys.getCurrentDirectory(), fileName);
 }
 
 const categoryFormatMap = {
@@ -147,14 +146,6 @@ function transformDiagnostics(diagnostics: ts.Diagnostic[]): Warning[] {
     }
 
     return diagnostics.map(transformDiagnostic)
-}
-
-export function parseConfigFile(configFilePath: string): ts.ParsedCommandLine {
-    let configContents = ts.sys.readFile(configFilePath);
-    const { config, error } = ts.parseConfigFileTextToJson(configFilePath, configContents);
-    if (error) throw error;
-    const configCommandline = ts.parseJsonConfigFileContent(config, ts.sys, path.dirname(configFilePath));
-    return configCommandline
 }
 
 export function compile(compilerOptions: ts.CompilerOptions, sourceFiles?: string[]): Warning[] {

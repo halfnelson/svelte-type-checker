@@ -8,7 +8,6 @@
       
       "noEmitOnError": true,
       "noErrorTruncation": true,
-
       //let rollup handle these
       "module": "esnext",
       "moduleResolution": "node",
@@ -24,6 +23,6 @@
         "src/*"
       ]
     },
-    "include": [ "/src/*" ],
+    "include": [ "src/*.ts" ],
     "exclude": [ "node_modules"]
   }

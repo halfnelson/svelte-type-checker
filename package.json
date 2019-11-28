@@ -1,7 +1,7 @@
 {
   "name": "svelte-type-checker",
   "version": "0.1.0",
-  "description": "check svelte components for semantic problems using typescript",
+  "description": "Check svelte components for semantic problems using Typescript",
   "author": "David Pershouse",
   "license": "MIT",
   "keywords": [
@@ -18,8 +18,9 @@
   "devDependencies": {
     "@types/mocha": "^5.2.7",
     "@types/node": "^8.10.53",
-    "magic-string": "^0.25.4",
     "chalk": "~3.0.0",
+    "commander": "^4.0.1",
+    "magic-string": "^0.25.4",
     "mocha": "^6.2.2",
     "rollup": "^1.12.0",
     "rollup-plugin-commonjs": "^10.0.0",
@@ -35,10 +36,10 @@
     "typescript": "^3.6.4"
   },
   "dependencies": {
-    "svelte2tsx": "0.1.0"
+    "svelte2tsx": "~0.1.0"
   },
   "peerDependencies": {
-    "svelte": "^3.14.1",
+    "svelte": "^3.15.0",
     "typescript": "^3.6.4"
   },
   "scripts": {
