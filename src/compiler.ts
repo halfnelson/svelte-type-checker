@@ -38,7 +38,10 @@ function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost 
 
     function resolveModuleNames(moduleNames: string[] , containingFile: string ): ts.ResolvedModule[] {
         return moduleNames.map(moduleName => {
-            let lookupResult = ts.resolveModuleName(moduleName,containingFile, configOptions, original);
+            let lookupResult = ts.resolveModuleName(moduleName,containingFile, configOptions, { 
+                fileExists: f => f.endsWith('.svelte.tsx') ? ts.sys.fileExists(f.substring(0, f.length - ".tsx".length)) : ts.sys.fileExists(f),
+                readFile: ts.sys.readFile
+            });
             if (lookupResult.resolvedModule) return lookupResult.resolvedModule;
             //try with .tsx extension
             if (moduleName.indexOf(".svelte") >= 0) {
@@ -55,6 +58,9 @@ function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost 
                         } as ts.ResolvedModuleFull
                     }
                 }
+            }
+            if (moduleName.startsWith("@")) {
+                console.log("could not find module", moduleName, (lookupResult as any).failedLookupLocations.filter(x => x.startsWith("C:/dev/svelte/svelte/site/node_modules")))
             }
             return undefined;
         })
