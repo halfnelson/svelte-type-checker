@@ -19,8 +19,14 @@ function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost 
                  }
                  return undefined;
             }
-            let output = svelte2tsx(sourceText);
-
+            
+            let output;
+            try {
+                output = svelte2tsx(sourceText);
+            } catch (e) {
+                console.error("error converting file ", fileName);
+                throw e;
+            }
             let srcFile = ts.createSourceFile(fileName, output.code, languageVersion);
             (srcFile as any).__svelte_map = output.map;
             (srcFile as any).__svelte_source = sourceText;
@@ -59,9 +65,9 @@ function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost 
                     }
                 }
             }
-            if (moduleName.startsWith("@")) {
-                console.log("could not find module", moduleName, (lookupResult as any).failedLookupLocations.filter(x => x.startsWith("C:/dev/svelte/svelte/site/node_modules")))
-            }
+           // if (moduleName.startsWith("@")) {
+          //      console.log("could not find module", moduleName, (lookupResult as any).failedLookupLocations.filter(x => x.startsWith("C:/dev/svelte/svelte/site/node_modules")))
+          //  }
             return undefined;
         })
     }
