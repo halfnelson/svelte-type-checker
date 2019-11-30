@@ -23,7 +23,7 @@ function reportDiagnostic(d: Warning) {
     process.stdout.write(output);
 }
 
-function typeCheck(rootFilesGlob, tsconfigPath = null) {
+function typeCheck(rootFilesGlob, tsconfigPath = null, emit = false) {
   
 
     //resolve config
@@ -78,7 +78,7 @@ function typeCheck(rootFilesGlob, tsconfigPath = null) {
     const svelte2TsxPath = path.dirname(require.resolve('svelte2tsx'))
     const svelteTsxFiles = ['./svelte-shims.d.ts', './svelte-jsx.d.ts'].map(f => ts.sys.resolvePath(path.resolve(svelte2TsxPath, f)));
 
-    let diags = compile(compilerOptions, files.concat(svelteTsxFiles));
+    let diags = compile(compilerOptions, files.concat(svelteTsxFiles), emit);
     diags.forEach(reportDiagnostic)
 }
 
@@ -90,6 +90,7 @@ export function cli() {
         .description('Runs the type checker over the files and their dependencies. [the glob defaults to *.svelte]')
         .arguments('[rootFilesGlob]')
         .option('-d --config-dir <dir>', 'tsconfig/jsconfig directory', process.cwd())
+        .option('-e --emit-tsx', 'emit compiled .tsx file for debugging', false)
         .action((rootFilesGlob, opts) => {
             let glob = rootFilesGlob || '*.svelte'
             console.log(chalk`\n{underline svelte-type-checker ${pkg.version}}\n\n{gray files:}\t\t${glob}`)
@@ -103,7 +104,7 @@ export function cli() {
 
             console.log(chalk`{gray tsconfig:}\t${tsConfigPath || 'none'}\n\n`)
 
-            typeCheck(glob, tsConfigPath)
+            typeCheck(glob, tsConfigPath, opts.emit)
         })
 
     program.parse(process.argv);

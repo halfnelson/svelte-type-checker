@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 import getCodeFrame from './from_svelte/code_frame'
 import * as path from 'path';
 
-function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost {
+function createCompilerHost(configOptions: ts.CompilerOptions, emit: boolean = false): ts.CompilerHost {
 
     let original = ts.createCompilerHost(configOptions);
 
@@ -30,8 +30,9 @@ function createCompilerHost(configOptions: ts.CompilerOptions): ts.CompilerHost 
             let srcFile = ts.createSourceFile(fileName, output.code, languageVersion);
             (srcFile as any).__svelte_map = output.map;
             (srcFile as any).__svelte_source = sourceText;
-           
-            // fs.writeFileSync(fileName, output.code);
+
+            if (emit && fileName.endsWith(".svelte.tsx")) ts.sys.writeFile(fileName, output.code);
+
             return srcFile;
         }
         else {
@@ -160,10 +161,10 @@ function transformDiagnostics(diagnostics: ts.Diagnostic[]): Warning[] {
     return diagnostics.map(transformDiagnostic)
 }
 
-export function compile(compilerOptions: ts.CompilerOptions, sourceFiles?: string[]): Warning[] {
+export function compile(compilerOptions: ts.CompilerOptions, sourceFiles?: string[], emit: boolean = false): Warning[] {
 
     //compile
-    const host = createCompilerHost(compilerOptions);
+    const host = createCompilerHost(compilerOptions, emit);
     const program = ts.createProgram(sourceFiles.map(s=> s.endsWith(".svelte") ? s+".tsx" : s), compilerOptions, host);
 
     //collect any errors
