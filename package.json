@@ -20,6 +20,7 @@
     "@types/node": "^8.10.53",
     "chalk": "~3.0.0",
     "commander": "^4.0.1",
+    "glob": "^7.1.6",
     "magic-string": "^0.25.4",
     "mocha": "^6.2.2",
     "rollup": "^1.12.0",
@@ -31,15 +32,14 @@
     "source-map": "~0.6.1",
     "source-map-support": "0.5.16",
     "svelte": "^3.14.1",
-    "tiny-glob": "^0.2.6",
     "tslib": "^1.10.0",
     "typescript": "^3.6.4"
   },
   "dependencies": {
-    "svelte2tsx": "~0.1.0"
+    "svelte2tsx": "~0.1.1"
   },
   "peerDependencies": {
-    "svelte": "^3.15.0",
+    "svelte": "^3.16.0",
     "typescript": "^3.6.4"
   },
   "scripts": {

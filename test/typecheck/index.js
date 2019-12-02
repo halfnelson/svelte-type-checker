@@ -2,12 +2,18 @@ let converter = require('../../index.js')
 let fs = require('fs')
 let assert = require('assert')
 let path = require('path')
+let ts = require('typescript')
 
 describe('svelte2tsx', () => {
 
 	let configFileOptions = {}
 	before(() => {
-		configFileOptions = converter.parseConfigFile(path.resolve(__dirname, "./tsconfig.json"));
+			let configFilePath = path.resolve(__dirname, "./tsconfig.json")
+			let configContents = ts.sys.readFile(configFilePath);
+			const { config, error } = ts.parseConfigFileTextToJson(configFilePath, configContents);
+			if (error) throw error;
+			const configCommandline = ts.parseJsonConfigFileContent(config, ts.sys, path.dirname(configFilePath));
+			configFileOptions = configCommandline
 	})
 
 	fs.readdirSync(`${__dirname}/samples`).forEach(dir => {

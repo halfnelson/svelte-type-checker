@@ -3,7 +3,11 @@ import * as ts from 'typescript';
 import getCodeFrame from './from_svelte/code_frame'
 import * as path from 'path';
 
-function createCompilerHost(configOptions: ts.CompilerOptions, emit: boolean = false): ts.CompilerHost {
+
+
+type ProcessFileCallback = (filename: string, content: string) => void;
+
+function createCompilerHost(configOptions: ts.CompilerOptions, onProcessFile:ProcessFileCallback): ts.CompilerHost {
 
     let original = ts.createCompilerHost(configOptions);
 
@@ -31,15 +35,18 @@ function createCompilerHost(configOptions: ts.CompilerOptions, emit: boolean = f
             (srcFile as any).__svelte_map = output.map;
             (srcFile as any).__svelte_source = sourceText;
 
-            if (emit && fileName.endsWith(".svelte.tsx")) ts.sys.writeFile(fileName, output.code);
-
+            onProcessFile(srcFile.fileName, output.code);
+            
             return srcFile;
         }
         else {
             sourceText = ts.sys.readFile(fileName);
-            return sourceText !== undefined
-                ? ts.createSourceFile(fileName, sourceText, languageVersion)
-                : undefined;
+            if (sourceText) {
+                let file = ts.createSourceFile(fileName, sourceText, languageVersion)
+                onProcessFile(fileName, sourceText);
+                return file;
+            } 
+            return  undefined;
         }
     }
 
@@ -161,10 +168,10 @@ function transformDiagnostics(diagnostics: ts.Diagnostic[]): Warning[] {
     return diagnostics.map(transformDiagnostic)
 }
 
-export function compile(compilerOptions: ts.CompilerOptions, sourceFiles?: string[], emit: boolean = false): Warning[] {
+export function compile(compilerOptions: ts.CompilerOptions, sourceFiles?: string[], onProcessFile?: ProcessFileCallback): Warning[] {
 
     //compile
-    const host = createCompilerHost(compilerOptions, emit);
+    const host = createCompilerHost(compilerOptions, onProcessFile || (() => {}));
     const program = ts.createProgram(sourceFiles.map(s=> s.endsWith(".svelte") ? s+".tsx" : s), compilerOptions, host);
 
     //collect any errors
