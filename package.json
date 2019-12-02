@@ -39,7 +39,6 @@
     "svelte2tsx": "~0.1.2"
   },
   "peerDependencies": {
-    "svelte": "^3.16.0",
     "typescript": "^3.6.4"
   },
   "scripts": {
@@ -53,7 +52,9 @@
     "svelte-type-checker": "./cli.js"
   },
   "files": [
+    "cli.js",
     "index.js",
+    "index.mjs",
     "README.md",
     "LICENSE"
   ]
