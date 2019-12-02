@@ -140,8 +140,7 @@ export function cli() {
             }
 
             const tsConfigPath = !opts.dir ? null : ts.findConfigFile(opts.dir, ts.sys.fileExists, 'tsconfig.json') || ts.findConfigFile(opts.dir, ts.sys.fileExists, 'jsconfig.json') || null;
-
-            typeCheck(glob, tsConfigPath, opts.emit)
+            typeCheck(glob, tsConfigPath, opts.emitTsx)
         })
 
     program.parse(process.argv);
