@@ -5,6 +5,8 @@ Performs its magic using [svelte2tsx](https://github.com/halfnelson/svelte2tsx) 
 
 __NOTE__ It has typescript as a `peerDependency` so you will need to have it installed for the code to function.
 
+__NOTE__ Your Svelte components do not need to be typescript for this to run since typescript is a superset of javascript.
+
 ## Install
 
 ```sh
