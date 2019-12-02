@@ -1,17 +1,17 @@
 {
   "name": "svelte-type-checker",
   "version": "0.1.2",
-  "description": "Check svelte components for semantic problems using Typescript",
+  "description": "Check Svelte components for problems using Typescript",
   "author": "David Pershouse",
   "license": "MIT",
   "keywords": [
     "svelte",
     "typescript"
   ],
-  "homepage": "https://github.com/halfnelson/svelte2tsx",
+  "homepage": "https://github.com/halfnelson/svelte-type-checker",
   "repository": {
     "type": "git",
-    "url": "https://github.com/halfnelson/svelte2tsx.git"
+    "url": "https://github.com/halfnelson/svelte-type-checker.git"
   },
   "type": "commonjs",
   "main": "index.js",
@@ -36,7 +36,7 @@
     "typescript": "^3.6.4"
   },
   "dependencies": {
-    "svelte2tsx": "file:../sveltets"
+    "svelte2tsx": "~0.1.2"
   },
   "peerDependencies": {
     "svelte": "^3.16.0",

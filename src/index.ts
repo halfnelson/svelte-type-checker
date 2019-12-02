@@ -126,12 +126,12 @@ export function cli() {
     program.version(pkg.version);
 
     program
-        .description('Runs the type checker over the files and their dependencies. [the glob defaults to *.svelte]')
+        .description('Runs the type checker over the files and their dependencies. [the glob defaults to ./**/*.svelte]')
         .arguments('[rootFilesGlob]')
         .option('-d --config-dir <dir>', 'tsconfig/jsconfig directory', process.cwd())
         .option('-e --emit-tsx', 'emit compiled .tsx file for debugging', false)
         .action((rootFilesGlob, opts) => {
-            let glob = rootFilesGlob || '*.svelte'
+            let glob = rootFilesGlob || './**/*.svelte'
             console.log(chalk`\n{underline svelte-type-checker ${pkg.version}}\n`)
 
             if (opts.dir && !ts.sys.directoryExists(opts.dir)) {
@@ -140,8 +140,6 @@ export function cli() {
             }
 
             const tsConfigPath = !opts.dir ? null : ts.findConfigFile(opts.dir, ts.sys.fileExists, 'tsconfig.json') || ts.findConfigFile(opts.dir, ts.sys.fileExists, 'jsconfig.json') || null;
-
-            
 
             typeCheck(glob, tsConfigPath, opts.emit)
         })
