@@ -29,7 +29,8 @@ function typeCheck(rootFilesGlob, tsconfigPath = null, emit = false) {
         target: ts.ScriptTarget.Latest,
         module: ts.ModuleKind.ESNext,
         moduleResolution: ts.ModuleResolutionKind.NodeJs,
-        allowJs: true,
+        esModuleInterop: true,
+        allowJs: true
     };
 
     
