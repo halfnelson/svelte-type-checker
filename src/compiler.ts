@@ -177,10 +177,10 @@ function transformDiagnostics(diagnostics: ts.Diagnostic[]): Warning[] {
                     if (pos.line == 0) {
                         console.log("invalid pos", start, end, diagnostic.start);
                     }
-                    let res = decoder.originalPositionFor({ line: pos.line, column: pos.character })
+                    let res = decoder.originalPositionFor({ line: pos.line, column: pos.character-1 })
 
                     pos.line = res.line;
-                    pos.character = res.column;
+                    pos.character = res.column+1;
                 }
 
                 if (relativeFileName.endsWith(".svelte.tsx")) {
@@ -195,7 +195,7 @@ function transformDiagnostics(diagnostics: ts.Diagnostic[]): Warning[] {
                 end: { line: end.line, column: end.character },
                 filename: relativeFileName,
                 frame: getCodeFrame(sourceText, start.line, start.character, Math.max(start.line == end.line ? end.character - start.character : 1, 1))
-            }
+            };
 
             return warning;
         }
