@@ -1,4 +1,6 @@
-# svelte-type-checker
+# svelte-type-checker - Deprecated
+
+> __WARNING__ This is deprecated. All of its functionality can be now found in the official cli checker https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check
 
 When run as a script and provided a file glob, will type check all svelte/js/ts files in that glob (and all their dependencies).
 Performs its magic using [svelte2tsx](https://github.com/halfnelson/svelte2tsx) and Typescript.
